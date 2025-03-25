@@ -1,18 +1,20 @@
+import { Animations } from './Animations';
+import { GameObject } from './GameObject';
 import type { ImageResource } from './Resources';
 import { Vector2 } from './Vector2';
 
 interface SpriteOptions {
   resource: ImageResource; // Image we want to load
-  frameSize: Vector2; // size of the crop of the image
+  frameSize?: Vector2; // size of the crop of the image
   hFrames?: number; // number of frames in the horizontal direction
   vFrames?: number; // number of frames in the vertical direction
   frame?: number; // frame we want to display
   scale?: number; // scale of the image
   position?: Vector2; // position of the image
-  destination?: Vector2; // destination of the image
+  animations?: Animations; // animation config
 }
 
-export class Sprite {
+export class Sprite extends GameObject {
   public resource: ImageResource;
   public frameSize: Vector2;
   public hFrames: number;
@@ -20,7 +22,7 @@ export class Sprite {
   public frame: number;
   public scale: number;
   public position: Vector2;
-  public destination: Vector2;
+  public animations: Animations | null;
   private frameMap: Map<number, { x: number; y: number }>;
 
   constructor({
@@ -31,8 +33,9 @@ export class Sprite {
     frame,
     scale,
     position,
-    destination
+    animations
   }: SpriteOptions) {
+    super({});
     this.resource = resource;
     this.frameSize = frameSize ?? new Vector2(16, 16);
     this.hFrames = hFrames ?? 1;
@@ -40,7 +43,7 @@ export class Sprite {
     this.frame = frame ?? 0;
     this.scale = scale ?? 1;
     this.position = position ?? new Vector2();
-    this.destination = destination ?? new Vector2();
+    this.animations = animations ?? null;
 
     this.frameMap = new Map();
     this.buildFrameMap();
@@ -57,6 +60,13 @@ export class Sprite {
         frameCount++;
       }
     }
+  }
+
+  step(delta: number) {
+    if (!this.animations) return;
+
+    this.animations.step(delta);
+    this.frame = this.animations.frame;
   }
 
   drawImage(ctx: CanvasRenderingContext2D, position: Vector2) {

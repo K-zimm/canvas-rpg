@@ -14,7 +14,8 @@ class Resources {
       sky: '/sprites/sky.png',
       ground: '/sprites/ground.png',
       shadow: '/sprites/shadow.png',
-      hero: '/sprites/hero-sheet.png'
+      hero: '/sprites/hero-sheet.png',
+      rod: '/sprites/rod.png'
     };
     this.images = {};
 
